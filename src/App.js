@@ -1,19 +1,29 @@
 import { useEffect, useReducer } from "react";
 import Header from "./Header.js";
 import Main from "./Main.js";
-const initalState = { questions: [], status: "loading" };
+import Loader from "./Loader.js";
+import Error from "./Error.js";
+import StartScreen from "./StartScreen.js";
+import Quesiton from "./Question.js";
+const initalState = { questions: [], status: "loading", index: 0 };
 function reducer(state, action) {
   switch (action.type) {
     case "dataReceived":
       return { ...state, questions: action.payload, status: "ready" };
     case "dataError":
       return { ...state, status: "Error" };
+    case "start":
+      return { ...state, status: "active" };
     default:
       throw new Error("Action Unknown");
   }
 }
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, initalState);
+  const [{ questions, status, index }, dispatch] = useReducer(
+    reducer,
+    initalState
+  );
+  const numQuestions = questions.length;
   useEffect(() => {
     async function fetchQuestions() {
       try {
@@ -35,7 +45,14 @@ export default function App() {
   return (
     <div className="app">
       <Header />
-      <Main>{state.questions}</Main>
+      <Main>
+        {status === "loading" && <Loader />}
+        {status === "Error" && <Error />}
+        {status === "ready" && (
+          <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
+        )}
+        {status === "active" && <Quesiton questions={questions[index]} />}
+      </Main>
     </div>
   );
 }
