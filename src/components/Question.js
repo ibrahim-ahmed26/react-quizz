@@ -1,10 +1,13 @@
+import { useQuiz } from "../context/QuizContext";
 import Options from "./Options";
 
-export default function Quesiton({ questions, answer, dispatch }) {
+export default function Quesiton() {
+  const { questions, index } = useQuiz();
+  const currentQuestion = questions[index];
   return (
     <div>
-      <h4>{questions.question}</h4>
-      <Options questions={questions} answer={answer} dispatch={dispatch} />
+      <h4>{currentQuestion.question}</h4>
+      <Options />
     </div>
   );
 }
